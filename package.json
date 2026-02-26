@@ -1,0 +1,83 @@
+{
+  "name": "tab-sync",
+  "version": "0.1.0",
+  "description": "Zero-dependency TypeScript library for real-time state synchronization across browser tabs, with leader election and cross-tab RPC",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react/index.d.ts",
+        "default": "./dist/react/index.js"
+      },
+      "require": {
+        "types": "./dist/react/index.d.cts",
+        "default": "./dist/react/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build",
+    "demo": "npm run build && npx serve ."
+  },
+  "keywords": [
+    "tab-sync",
+    "broadcast-channel",
+    "cross-tab",
+    "state-sync",
+    "leader-election",
+    "browser-tabs",
+    "rpc",
+    "multi-tab",
+    "localstorage"
+  ],
+  "author": "serbi2012",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serbi2012/tab-sync.git"
+  },
+  "homepage": "https://github.com/serbi2012/tab-sync#readme",
+  "bugs": {
+    "url": "https://github.com/serbi2012/tab-sync/issues"
+  },
+  "sideEffects": false,
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "jsdom": "^25.0.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  }
+}

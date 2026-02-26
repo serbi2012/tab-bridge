@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tab-sync | Interactive Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Tokens ── */
+    :root {
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace;
+      --bg: #f1f5f9; --surface: #ffffff; --surface2: #f8fafc;
+      --text: #0f172a; --text2: #475569; --text3: #94a3b8;
+      --border: #e2e8f0; --border2: #cbd5e1;
+      --primary: #6366f1; --primary-hover: #4f46e5; --primary-soft: #eef2ff;
+      --success: #22c55e; --success-soft: #f0fdf4;
+      --warning: #f59e0b; --warning-soft: #fffbeb;
+      --danger: #ef4444;
+      --radius: 12px; --radius-sm: 8px; --radius-xs: 6px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,.07), 0 2px 4px -2px rgba(0,0,0,.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.08), 0 4px 6px -4px rgba(0,0,0,.04);
+      --transition: .2s cubic-bezier(.4,0,.2,1);
+    }
+    [data-theme="dark"] {
+      --bg: #020617; --surface: #0f172a; --surface2: #1e293b;
+      --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b;
+      --border: #1e293b; --border2: #334155;
+      --primary: #818cf8; --primary-hover: #6366f1; --primary-soft: #1e1b4b;
+      --success-soft: #052e16; --warning-soft: #451a03;
+      --shadow: 0 1px 3px rgba(0,0,0,.3); --shadow-md: 0 4px 6px rgba(0,0,0,.3);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,.4);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); transition: background var(--transition), color var(--transition); line-height: 1.6; }
+    ::selection { background: var(--primary); color: #fff; }
+
+    /* ── Layout ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 20px 60px; }
+
+    /* ── Hero ── */
+    .hero { text-align: center; padding: 48px 0 36px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--primary-soft); color: var(--primary); font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 99px; margin-bottom: 16px; letter-spacing: .3px; }
+    .hero h1 { font-size: 36px; font-weight: 800; letter-spacing: -.5px; margin-bottom: 8px; }
+    .hero h1 span { background: linear-gradient(135deg, var(--primary), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { color: var(--text2); font-size: 16px; max-width: 480px; margin: 0 auto 20px; }
+    .hero-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; font-family: var(--font); cursor: pointer; border: none; transition: all var(--transition); }
+    .btn:active { transform: scale(.97); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(99,102,241,.35); }
+    .btn-outline { background: var(--surface); color: var(--text); border: 1px solid var(--border2); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-sm { padding: 6px 14px; font-size: 13px; border-radius: var(--radius-xs); }
+    .btn-ghost { background: transparent; color: var(--text2); padding: 6px 10px; }
+    .btn-ghost:hover { color: var(--primary); background: var(--primary-soft); }
+    .btn-icon { width: 40px; height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-size: 18px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); cursor: pointer; transition: all var(--transition); }
+    .btn-icon:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-icon:active { transform: scale(.93); }
+
+    /* ── Card ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow); transition: background var(--transition), border-color var(--transition); }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .card-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; }
+    .card-title .icon { font-size: 18px; }
+    .card-desc { color: var(--text2); font-size: 13px; margin-top: 2px; }
+
+    /* ── Status Bar ── */
+    .status-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 20px; margin-bottom: 24px; box-shadow: var(--shadow); position: sticky; top: 12px; z-index: 100; backdrop-filter: blur(12px); }
+    .status-left { display: flex; align-items: center; gap: 14px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; flex-shrink: 0; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,.5); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
+    .status-label { font-size: 13px; font-weight: 600; }
+    .status-meta { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+    .status-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Tab Presence ── */
+    .tabs-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tab-chip { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border); font-size: 13px; transition: all var(--transition); min-width: 140px; }
+    .tab-chip.self { border-color: var(--primary); background: var(--primary-soft); }
+    .tab-chip.leader { border-color: var(--success); }
+    .tab-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .tab-chip-info { flex: 1; min-width: 0; }
+    .tab-chip-id { font-family: var(--mono); font-size: 12px; font-weight: 600; }
+    .tab-chip-role { font-size: 11px; color: var(--text3); }
+    .tab-chip-role.is-leader { color: var(--success); font-weight: 600; }
+
+    /* ── Sync Grid ── */
+    .sync-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .sync-grid { grid-template-columns: 1fr; } }
+
+    .sync-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; transition: all var(--transition); position: relative; overflow: hidden; }
+    .sync-card.flash::after { content: ''; position: absolute; inset: 0; background: var(--primary); opacity: 0; animation: flash-anim .5s ease-out; pointer-events: none; border-radius: var(--radius-sm); }
+    @keyframes flash-anim { 0% { opacity: .12; } 100% { opacity: 0; } }
+    .sync-label { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
+
+    /* Counter */
+    .counter-display { font-size: 56px; font-weight: 800; text-align: center; font-family: var(--mono); line-height: 1; margin: 12px 0 16px; transition: color var(--transition); }
+    .counter-controls { display: flex; gap: 8px; justify-content: center; }
+
+    /* Theme */
+    .theme-options { display: flex; gap: 8px; }
+    .theme-btn { flex: 1; padding: 12px; border-radius: var(--radius-sm); border: 2px solid var(--border); background: var(--surface); font-size: 13px; font-weight: 600; font-family: var(--font); cursor: pointer; transition: all var(--transition); text-align: center; }
+    .theme-btn:hover { border-color: var(--primary); }
+    .theme-btn.active { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+
+    /* Color */
+    .color-demo { display: flex; align-items: center; gap: 14px; }
+    .color-input-wrap { position: relative; }
+    .color-input-wrap input[type="color"] { width: 48px; height: 48px; border: none; border-radius: var(--radius-sm); cursor: pointer; background: none; padding: 0; }
+    .color-input-wrap input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+    .color-input-wrap input[type="color"]::-webkit-color-swatch { border-radius: 6px; border: 2px solid var(--border); }
+    .color-preview { flex: 1; height: 48px; border-radius: var(--radius-sm); transition: background .3s; border: 1px solid var(--border); }
+    .color-hex { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--text2); min-width: 70px; text-align: right; }
+
+    /* Text */
+    .sync-input { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-family: var(--font); background: var(--surface); color: var(--text); outline: none; transition: border-color var(--transition); }
+    .sync-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,.12); }
+
+    /* ── RPC ── */
+    .rpc-grid { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; }
+    @media (max-width: 600px) { .rpc-grid { grid-template-columns: 1fr; } }
+    .rpc-buttons { display: flex; flex-direction: column; gap: 8px; }
+    .rpc-output { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; font-family: var(--mono); font-size: 13px; min-height: 100px; white-space: pre-wrap; word-break: break-all; color: var(--text2); line-height: 1.6; }
+
+    /* ── Code Snippet ── */
+    .code-toggle { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text3); cursor: pointer; background: none; border: none; font-family: var(--font); padding: 4px 8px; border-radius: var(--radius-xs); transition: all var(--transition); }
+    .code-toggle:hover { color: var(--primary); background: var(--primary-soft); }
+    .code-block { display: none; margin-top: 16px; background: #1e293b; color: #e2e8f0; border-radius: var(--radius-sm); padding: 16px 18px; font-family: var(--mono); font-size: 12.5px; line-height: 1.7; overflow-x: auto; }
+    [data-theme="dark"] .code-block { background: #020617; border: 1px solid var(--border); }
+    .code-block.open { display: block; animation: slideDown .2s ease-out; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    .code-block .kw { color: #c084fc; }
+    .code-block .str { color: #86efac; }
+    .code-block .fn { color: #93c5fd; }
+    .code-block .cm { color: #64748b; }
+    .code-block .num { color: #fbbf24; }
+
+    /* ── Event Log ── */
+    .log-container { max-height: 220px; overflow-y: auto; font-family: var(--mono); font-size: 12px; scrollbar-width: thin; }
+    .log-container::-webkit-scrollbar { width: 4px; }
+    .log-container::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+    .log-entry { display: flex; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); animation: fadeIn .3s; }
+    .log-entry:last-child { border-bottom: none; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: translateX(0); } }
+    .log-time { color: var(--text3); white-space: nowrap; }
+    .log-tag { font-weight: 600; white-space: nowrap; }
+    .log-tag.sync { color: var(--primary); }
+    .log-tag.leader { color: var(--success); }
+    .log-tag.rpc { color: var(--warning); }
+    .log-tag.tab { color: #ec4899; }
+    .log-msg { color: var(--text2); word-break: break-word; }
+    .log-empty { color: var(--text3); text-align: center; padding: 24px; }
+
+    /* ── Footer ── */
+    .footer { text-align: center; padding: 32px 0 12px; font-size: 12px; color: var(--text3); }
+    .footer a { color: var(--primary); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Zero Dependency
+      </div>
+      <h1><span>tab-sync</span> Demo</h1>
+      <p class="hero-sub">브라우저 탭 간 실시간 상태 동기화, 리더 선출, Cross-Tab RPC를 직접 체험해보세요</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="open-tab-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          새 탭 열기
+        </button>
+        <button class="btn btn-outline" id="copy-url-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          URL 복사
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="status-bar">
+      <div class="status-left">
+        <div class="status-dot"></div>
+        <div>
+          <div class="status-label">연결됨 · <span id="tab-count-display">1</span>개 탭</div>
+          <div class="status-meta">ID: <span id="my-tab-id">—</span> · <span id="my-role">Follower</span></div>
+        </div>
+      </div>
+      <div class="status-right">
+        <span id="transport-badge" style="font-size:11px; color:var(--text3); font-family:var(--mono);">BroadcastChannel</span>
+      </div>
+    </div>
+
+    <!-- Tab Presence -->
+    <div class="card" id="presence-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><span class="icon">👥</span> 탭 프레즌스</div>
+          <div class="card-desc">현재 열려 있는 모든 탭의 실시간 상태</div>
+        </div>
+        <button class="code-toggle" data-target="code-presence">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          코드
+        </button>
+      </div>
+      <div class="tabs-grid" id="tabs-grid"></div>
+      <div class="code-block" id="code-presence">
+<span class="cm">// 탭 목록 가져오기</span>
+<span class="kw">const</span> tabs = sync.<span class="fn">getTabs</span>();
+<span class="cm">// → [{ id, createdAt, isLeader, isActive, url }, ...]</span>
+
+<span class="cm">// 탭 변화 감지</span>
+sync.<span class="fn">onTabChange</span>(<span class="kw">(tabs) =></span> {
+  console.<span class="fn">log</span>(<span class="str">`열린 탭: ${tabs.length}개`</span>);
+});
+
+<span class="cm">// 현재 탭 수</span>
+sync.<span class="fn">getTabCount</span>(); <span class="cm">// 3</span>
+      </div>
+    </div>
+
+    <!-- State Sync -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><span class="icon">🔄</span> 상태 동기화</div>
+          <div class="card-desc">다른 탭에서 값을 변경하면 여기에 실시간 반영됩니다</div>
+        </div>
+        <button class="code-toggle" data-target="code-sync">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          코드
+        </button>
+      </div>
+
+      <div class="sync-grid">
+        <!-- Theme -->
+        <div class="sync-card" id="sync-theme">
+          <div class="sync-label">🎨 테마</div>
+          <div class="theme-options">
+            <button class="theme-btn active" data-theme-val="light">☀️ 라이트</button>
+            <button class="theme-btn" data-theme-val="dark">🌙 다크</button>
+          </div>
+        </div>
+
+        <!-- Counter -->
+        <div class="sync-card" id="sync-counter">
+          <div class="sync-label">🔢 카운터</div>
+          <div class="counter-display" id="counter-value">0</div>
+          <div class="counter-controls">
+            <button class="btn-icon" id="dec-btn">−</button>
+            <button class="btn-icon" id="inc-btn">+</button>
+            <button class="btn btn-sm btn-outline" id="reset-btn">초기화</button>
+          </div>
+        </div>
+
+        <!-- Color -->
+        <div class="sync-card" id="sync-color">
+          <div class="sync-label">🎯 공유 색상</div>
+          <div class="color-demo">
+            <div class="color-input-wrap">
+              <input type="color" id="color-input" value="#6366f1">
+            </div>
+            <div class="color-preview" id="color-preview" style="background:#6366f1;"></div>
+            <span class="color-hex" id="color-hex">#6366f1</span>
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="sync-card" id="sync-message">
+          <div class="sync-label">💬 공유 메시지</div>
+          <input type="text" class="sync-input" id="message-input" placeholder="여기에 입력하면 모든 탭에 동기화됩니다...">
+        </div>
+      </div>
+
+      <div class="code-block" id="code-sync">
+<span class="kw">const</span> sync = <span class="fn">createTabSync</span>({
+  <span class="fn">initial</span>: {
+    theme: <span class="str">'light'</span>,
+    count: <span class="num">0</span>,
+    color: <span class="str">'#6366f1'</span>,
+    message: <span class="str">''</span>,
+  },
+});
+
+<span class="cm">// 값 읽기 & 쓰기</span>
+sync.<span class="fn">get</span>(<span class="str">'count'</span>);           <span class="cm">// 0</span>
+sync.<span class="fn">set</span>(<span class="str">'count'</span>, <span class="num">42</span>);       <span class="cm">// → 모든 탭에 전파</span>
+
+<span class="cm">// 특정 키 구독</span>
+sync.<span class="fn">on</span>(<span class="str">'count'</span>, (value, meta) => {
+  console.<span class="fn">log</span>(value, meta.isLocal ? <span class="str">'local'</span> : <span class="str">'remote'</span>);
+});
+
+<span class="cm">// 여러 키 한번에 변경</span>
+sync.<span class="fn">patch</span>({ theme: <span class="str">'dark'</span>, count: <span class="num">0</span> });
+      </div>
+    </div>
+
+    <!-- Leader Election -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><span class="icon">👑</span> 리더 선출</div>
+          <div class="card-desc">자동 리더 선출 · 리더 탭을 닫으면 새 리더가 즉시 선출됩니다</div>
+        </div>
+        <button class="code-toggle" data-target="code-leader">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          코드
+        </button>
+      </div>
+      <div id="leader-info" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;">
+          <div style="font-size:13px; color:var(--text3); margin-bottom:4px;">현재 리더</div>
+          <div id="leader-display" style="font-family:var(--mono); font-size:15px; font-weight:600;">—</div>
+        </div>
+        <div style="flex:1; min-width:200px;">
+          <div style="font-size:13px; color:var(--text3); margin-bottom:4px;">이 탭의 역할</div>
+          <div id="role-display" style="font-size:15px; font-weight:600;">—</div>
+        </div>
+        <div style="flex:1; min-width:200px;">
+          <div style="font-size:13px; color:var(--text3); margin-bottom:4px;">리더 선출 횟수</div>
+          <div id="election-count" style="font-family:var(--mono); font-size:15px; font-weight:600;">0</div>
+        </div>
+      </div>
+      <div class="code-block" id="code-leader">
+<span class="cm">// 리더 여부 확인</span>
+sync.<span class="fn">isLeader</span>();  <span class="cm">// true | false</span>
+
+<span class="cm">// 리더 정보 가져오기</span>
+sync.<span class="fn">getLeader</span>(); <span class="cm">// { id, createdAt, isLeader, ... }</span>
+
+<span class="cm">// 리더가 되었을 때 콜백 (클린업 함수 반환 가능)</span>
+sync.<span class="fn">onLeader</span>(() => {
+  console.<span class="fn">log</span>(<span class="str">'이 탭이 리더가 되었습니다!'</span>);
+  <span class="kw">return</span> () => console.<span class="fn">log</span>(<span class="str">'리더 역할 해제'</span>);
+});
+      </div>
+    </div>
+
+    <!-- RPC -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><span class="icon">📡</span> Cross-Tab RPC</div>
+          <div class="card-desc">다른 탭의 함수를 원격 호출하고 결과를 받습니다</div>
+        </div>
+        <button class="code-toggle" data-target="code-rpc">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          코드
+        </button>
+      </div>
+      <div class="rpc-grid">
+        <div class="rpc-buttons">
+          <button class="btn btn-sm btn-primary" id="rpc-time-btn">⏰ 리더 시간 요청</button>
+          <button class="btn btn-sm btn-outline" id="rpc-ping-btn">🏓 리더에게 Ping</button>
+          <button class="btn btn-sm btn-outline" id="rpc-compute-btn">🧮 리더에게 계산 요청</button>
+        </div>
+        <div class="rpc-output" id="rpc-output">Follower 탭에서 버튼을 눌러 리더 탭에 RPC를 보내보세요.
+2개 이상의 탭이 필요합니다.</div>
+      </div>
+      <div class="code-block" id="code-rpc">
+<span class="cm">// 핸들러 등록 (모든 탭에서)</span>
+sync.<span class="fn">handle</span>(<span class="str">'getTime'</span>, () => {
+  <span class="kw">return</span> { time: <span class="kw">new</span> Date().<span class="fn">toISOString</span>() };
+});
+
+<span class="cm">// 리더 탭에게 RPC 호출</span>
+<span class="kw">const</span> result = <span class="kw">await</span> sync.<span class="fn">call</span>(<span class="str">'leader'</span>, <span class="str">'getTime'</span>);
+console.<span class="fn">log</span>(result.time);
+
+<span class="cm">// 특정 탭에게 RPC 호출</span>
+<span class="kw">const</span> pong = <span class="kw">await</span> sync.<span class="fn">call</span>(targetTabId, <span class="str">'ping'</span>);
+
+<span class="cm">// 타임아웃 설정 (기본 5초)</span>
+<span class="kw">await</span> sync.<span class="fn">call</span>(<span class="str">'leader'</span>, <span class="str">'heavyTask'</span>, args, <span class="num">10000</span>);
+      </div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><span class="icon">📋</span> 이벤트 로그</div>
+          <div class="card-desc">탭 간 발생하는 모든 이벤트를 실시간 추적</div>
+        </div>
+        <button class="btn btn-sm btn-ghost" id="clear-log-btn">지우기</button>
+      </div>
+      <div class="log-container" id="log-container">
+        <div class="log-empty">이벤트가 여기에 표시됩니다</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <strong>tab-sync</strong> · Zero-dependency browser tab synchronization
+      <br><a href="https://github.com/serbi2012/tab-sync" target="_blank">GitHub</a> · npm에 배포되지 않는 데모 페이지입니다
+    </div>
+  </div>
+
+  <script type="module">
+    import { createTabSync } from '../dist/index.js';
+
+    // ── Init ──
+    const sync = createTabSync({
+      initial: { theme: 'light', count: 0, color: '#6366f1', message: '' },
+      channel: 'demo-v2',
+    });
+
+    const TAB_COLORS = ['#6366f1','#ec4899','#f59e0b','#22c55e','#06b6d4','#8b5cf6','#ef4444','#14b8a6'];
+
+    // ── Helpers ──
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => document.querySelectorAll(sel);
+
+    function getTabColor(id) {
+      let hash = 0;
+      for (let i = 0; i < id.length; i++) hash = ((hash << 5) - hash + id.charCodeAt(i)) | 0;
+      return TAB_COLORS[Math.abs(hash) % TAB_COLORS.length];
+    }
+
+    function flash(el) {
+      el.classList.remove('flash');
+      void el.offsetWidth;
+      el.classList.add('flash');
+    }
+
+    let electionCount = 0;
+
+    // ── Logging ──
+    function log(tag, msg) {
+      const container = $('#log-container');
+      const empty = container.querySelector('.log-empty');
+      if (empty) empty.remove();
+      const time = new Date().toLocaleTimeString('ko-KR', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `<span class="log-time">${time}</span><span class="log-tag ${tag}">${tag.toUpperCase()}</span><span class="log-msg">${msg}</span>`;
+      container.prepend(entry);
+      while (container.children.length > 80) container.lastChild.remove();
+    }
+
+    // ── Status Bar ──
+    $('#my-tab-id').textContent = sync.id.slice(0, 8);
+    $('#transport-badge').textContent = typeof BroadcastChannel !== 'undefined' ? 'BroadcastChannel' : 'localStorage';
+
+    function updateStatus() {
+      const isLeader = sync.isLeader();
+      $('#my-role').textContent = isLeader ? '👑 Leader' : 'Follower';
+      $('#tab-count-display').textContent = sync.getTabCount();
+    }
+
+    // ── Tab Presence ──
+    function renderTabs() {
+      const tabs = sync.getTabs();
+      const grid = $('#tabs-grid');
+      grid.innerHTML = tabs.map(t => {
+        const isSelf = t.id === sync.id;
+        const color = getTabColor(t.id);
+        const short = t.id.slice(0, 4).toUpperCase();
+        const selfClass = isSelf ? ' self' : '';
+        const leaderClass = t.isLeader ? ' leader' : '';
+        const role = t.isLeader ? '👑 Leader' : 'Follower';
+        const roleClass = t.isLeader ? ' is-leader' : '';
+        return `<div class="tab-chip${selfClass}${leaderClass}">
+          <div class="tab-avatar" style="background:${color}">${short}</div>
+          <div class="tab-chip-info">
+            <div class="tab-chip-id">${t.id.slice(0,8)}${isSelf ? ' (나)' : ''}</div>
+            <div class="tab-chip-role${roleClass}">${role}</div>
+          </div>
+        </div>`;
+      }).join('');
+      updateStatus();
+    }
+
+    // ── Leader ──
+    function updateLeaderInfo() {
+      const leader = sync.getLeader();
+      const isLeader = sync.isLeader();
+      if (leader) {
+        const color = getTabColor(leader.id);
+        const isSelf = leader.id === sync.id;
+        $('#leader-display').innerHTML = `<span style="color:${color}">${leader.id.slice(0,8)}</span>${isSelf ? ' (나)' : ''}`;
+      } else {
+        $('#leader-display').textContent = '선출 중...';
+      }
+      $('#role-display').innerHTML = isLeader
+        ? '<span style="color:var(--success)">👑 Leader</span>'
+        : '<span style="color:var(--text2)">Follower</span>';
+    }
+
+    sync.onLeader(() => {
+      electionCount++;
+      $('#election-count').textContent = electionCount;
+      updateLeaderInfo();
+      renderTabs();
+      log('leader', `이 탭이 리더가 되었습니다 (선출 #${electionCount})`);
+      return () => {
+        updateLeaderInfo();
+        renderTabs();
+        log('leader', '리더 역할이 해제되었습니다');
+      };
+    });
+
+    sync.onTabChange((tabs) => {
+      renderTabs();
+      updateLeaderInfo();
+      log('tab', `탭 변경 감지 → 현재 ${tabs.length}개`);
+    });
+
+    // ── Theme Sync ──
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      $$('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.themeVal === theme);
+      });
+    }
+
+    applyTheme(sync.get('theme'));
+
+    $$('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const theme = btn.dataset.themeVal;
+        sync.set('theme', theme);
+        log('sync', `테마 → ${theme}`);
+      });
+    });
+
+    sync.on('theme', (val, meta) => {
+      applyTheme(val);
+      if (!meta.isLocal) { flash($('#sync-theme')); log('sync', `테마 → ${val} (원격)`); }
+    });
+
+    // ── Counter Sync ──
+    function renderCounter(val) {
+      const el = $('#counter-value');
+      el.textContent = val;
+      el.style.color = val > 0 ? 'var(--success)' : val < 0 ? 'var(--danger)' : 'var(--text)';
+    }
+
+    renderCounter(sync.get('count'));
+
+    $('#inc-btn').addEventListener('click', () => sync.set('count', sync.get('count') + 1));
+    $('#dec-btn').addEventListener('click', () => sync.set('count', sync.get('count') - 1));
+    $('#reset-btn').addEventListener('click', () => { sync.set('count', 0); log('sync', '카운터 초기화'); });
+
+    sync.on('count', (val, meta) => {
+      renderCounter(val);
+      if (!meta.isLocal) { flash($('#sync-counter')); log('sync', `카운터 → ${val} (원격)`); }
+    });
+
+    // ── Color Sync ──
+    function renderColor(val) {
+      $('#color-input').value = val;
+      $('#color-preview').style.background = val;
+      $('#color-hex').textContent = val;
+    }
+
+    renderColor(sync.get('color'));
+
+    $('#color-input').addEventListener('input', (e) => sync.set('color', e.target.value));
+
+    sync.on('color', (val, meta) => {
+      renderColor(val);
+      if (!meta.isLocal) { flash($('#sync-color')); log('sync', `색상 → ${val} (원격)`); }
+    });
+
+    // ── Message Sync ──
+    $('#message-input').value = sync.get('message');
+
+    let messageComposing = false;
+    $('#message-input').addEventListener('compositionstart', () => { messageComposing = true; });
+    $('#message-input').addEventListener('compositionend', (e) => {
+      messageComposing = false;
+      sync.set('message', e.target.value);
+    });
+    $('#message-input').addEventListener('input', (e) => {
+      if (!messageComposing) sync.set('message', e.target.value);
+    });
+
+    sync.on('message', (val, meta) => {
+      if (!meta.isLocal) {
+        $('#message-input').value = val;
+        flash($('#sync-message'));
+        if (val) log('sync', `메시지 → "${val.slice(0,30)}${val.length > 30 ? '...' : ''}" (원격)`);
+      }
+    });
+
+    // ── RPC Handlers ──
+    sync.handle('getTime', () => ({
+      time: new Date().toLocaleString('ko-KR'),
+      iso: new Date().toISOString(),
+      tabId: sync.id.slice(0, 8),
+    }));
+
+    sync.handle('ping', (_args, callerId) => {
+      const start = performance.now();
+      return {
+        pong: true,
+        responder: sync.id.slice(0, 8),
+        caller: callerId.slice(0, 8),
+        respondedAt: new Date().toLocaleTimeString('ko-KR', { hour12: false }),
+      };
+    });
+
+    sync.handle('compute', (args) => {
+      const { a, b } = args;
+      return {
+        expression: `${a} × ${b}`,
+        result: a * b,
+        computedBy: sync.id.slice(0, 8),
+      };
+    });
+
+    async function rpcCall(method, args) {
+      const output = $('#rpc-output');
+      if (sync.isLeader()) {
+        output.textContent = '⚠️ 이 탭이 리더입니다.\n다른 탭(Follower)에서 이 버튼을 눌러보세요.\n\n리더가 자기 자신에게 RPC를 보낼 수 없습니다.';
+        log('rpc', '리더 탭에서는 리더 호출 불가');
+        return;
+      }
+      output.textContent = '⏳ 요청 중...';
+      const start = performance.now();
+      try {
+        const result = await sync.call('leader', method, args);
+        const elapsed = (performance.now() - start).toFixed(1);
+        output.textContent = `✅ 응답 (${elapsed}ms)\n\n${JSON.stringify(result, null, 2)}`;
+        log('rpc', `${method} 응답 수신 (${elapsed}ms)`);
+      } catch (err) {
+        output.textContent = `❌ 에러: ${err.message}`;
+        log('rpc', `${method} 에러: ${err.message}`);
+      }
+    }
+
+    $('#rpc-time-btn').addEventListener('click', () => rpcCall('getTime'));
+    $('#rpc-ping-btn').addEventListener('click', () => rpcCall('ping'));
+    $('#rpc-compute-btn').addEventListener('click', () => {
+      const a = Math.floor(Math.random() * 100) + 1;
+      const b = Math.floor(Math.random() * 100) + 1;
+      rpcCall('compute', { a, b });
+    });
+
+    // ── Code Toggles ──
+    $$('.code-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        target.classList.toggle('open');
+        btn.querySelector('svg').style.transform = target.classList.contains('open') ? 'rotate(90deg)' : '';
+      });
+    });
+
+    // ── Actions ──
+    $('#open-tab-btn').addEventListener('click', () => window.open(location.href, '_blank'));
+    $('#copy-url-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(location.href).then(() => {
+        const btn = $('#copy-url-btn');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 복사됨!';
+        setTimeout(() => { btn.innerHTML = orig; }, 1500);
+      });
+    });
+
+    // ── Clear Log ──
+    $('#clear-log-btn').addEventListener('click', () => {
+      $('#log-container').innerHTML = '<div class="log-empty">이벤트가 여기에 표시됩니다</div>';
+    });
+
+    // ── Boot ──
+    log('tab', `탭 시작 (${sync.id.slice(0, 8)})`);
+    setTimeout(() => { renderTabs(); updateLeaderInfo(); updateStatus(); }, 400);
+
+    window.addEventListener('beforeunload', () => sync.destroy());
+  </script>
+</body>
+</html>
