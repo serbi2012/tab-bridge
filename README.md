@@ -17,7 +17,6 @@
 [![npm version](https://img.shields.io/npm/v/tab-bridge?style=for-the-badge&color=cb3837&label=npm&logo=npm&logoColor=white)](https://www.npmjs.com/package/tab-bridge)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/tab-bridge?style=for-the-badge&color=6ead0a&label=size&logo=webpack&logoColor=white)](https://bundlephobia.com/package/tab-bridge)
 [![TypeScript](https://img.shields.io/badge/TypeScript-first-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![coverage](https://img.shields.io/codecov/c/github/serbi2012/tab-bridge?style=for-the-badge&color=44cc11&logo=codecov&logoColor=white&label=coverage)](https://codecov.io/gh/serbi2012/tab-bridge)
 [![license](https://img.shields.io/github/license/serbi2012/tab-bridge?style=for-the-badge&color=blue&logo=open-source-initiative&logoColor=white)](./LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/serbi2012/tab-bridge?style=for-the-badge&color=yellow&logo=github&logoColor=white)](https://github.com/serbi2012/tab-bridge)
 
