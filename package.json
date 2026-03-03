@@ -1,6 +1,6 @@
 {
   "name": "tab-bridge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Zero-dependency TypeScript library for real-time state synchronization across browser tabs, with leader election and cross-tab RPC",
   "type": "module",
   "main": "./dist/index.cjs",

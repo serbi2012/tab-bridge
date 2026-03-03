@@ -22,16 +22,7 @@
 
 <br />
 
-```mermaid
-graph LR
-    A["<b>Tab A</b><br/>👑 Leader"] <-->|"realtime sync"| B["<b>Tab B</b><br/>Follower"]
-    B <-->|"realtime sync"| C["<b>Tab C</b><br/>Follower"]
-    A <-->|"realtime sync"| C
-
-    style A fill:#4f46e5,stroke:#4338ca,color:#fff,stroke-width:2px
-    style B fill:#6366f1,stroke:#4f46e5,color:#fff,stroke-width:2px
-    style C fill:#6366f1,stroke:#4f46e5,color:#fff,stroke-width:2px
-```
+<img src="https://mermaid.ink/img/Z3JhcGggTFIKICAgIEFbIlRhYiBBXG7wn5GRIExlYWRlciJdIDwtLT58InJlYWx0aW1lIHN5bmMifCBCWyJUYWIgQlxuRm9sbG93ZXIiXQogICAgQiA8LS0-fCJyZWFsdGltZSBzeW5jInwgQ1siVGFiIENcbkZvbGxvd2VyIl0KICAgIEEgPC0tPnwicmVhbHRpbWUgc3luYyJ8IEMKICAgIHN0eWxlIEEgZmlsbDojNGY0NmU1LHN0cm9rZTojNDMzOGNhLGNvbG9yOiNmZmYsc3Ryb2tlLXdpZHRoOjJweAogICAgc3R5bGUgQiBmaWxsOiM2MzY2ZjEsc3Ryb2tlOiM0ZjQ2ZTUsY29sb3I6I2ZmZixzdHJva2Utd2lkdGg6MnB4CiAgICBzdHlsZSBDIGZpbGw6IzYzNjZmMSxzdHJva2U6IzRmNDZlNSxjb2xvcjojZmZmLHN0cm9rZS13aWR0aDoycHg?theme=dark&bgColor=0d1117" alt="tab-bridge sync diagram" />
 
 <br />
 
@@ -328,19 +319,7 @@ const sync = createTabSync({
 });
 ```
 
-```mermaid
-graph LR
-    A["set('age', -5)"] --> B{Middleware<br/>Pipeline}
-    B -->|"age < 0 → reject"| C["❌ Blocked"]
-    D["set('name', '  Alice  ')"] --> B
-    B -->|"trim()"| E["✅ 'Alice'"]
-
-    style A fill:#f59e0b,stroke:#d97706,color:#fff
-    style D fill:#f59e0b,stroke:#d97706,color:#fff
-    style B fill:#6366f1,stroke:#4f46e5,color:#fff
-    style C fill:#ef4444,stroke:#dc2626,color:#fff
-    style E fill:#22c55e,stroke:#16a34a,color:#fff
-```
+<img src="https://mermaid.ink/img/Z3JhcGggTFIKICAgIEFbInNldChhZ2UsIC01KSJdIC0tPiBCe01pZGRsZXdhcmUgUGlwZWxpbmV9CiAgICBCIC0tPnwiYWdlIDwgMCByZWplY3QifCBDWyJCbG9ja2VkIl0KICAgIERbInNldChuYW1lLCBBbGljZSkiXSAtLT4gQgogICAgQiAtLT58InRyaW0ifCBFWyJBbGljZSJdCiAgICBzdHlsZSBBIGZpbGw6I2Y1OWUwYixzdHJva2U6I2Q5NzcwNixjb2xvcjojZmZmCiAgICBzdHlsZSBEIGZpbGw6I2Y1OWUwYixzdHJva2U6I2Q5NzcwNixjb2xvcjojZmZmCiAgICBzdHlsZSBCIGZpbGw6IzYzNjZmMSxzdHJva2U6IzRmNDZlNSxjb2xvcjojZmZmCiAgICBzdHlsZSBDIGZpbGw6I2VmNDQ0NCxzdHJva2U6I2RjMjYyNixjb2xvcjojZmZmCiAgICBzdHlsZSBFIGZpbGw6IzIyYzU1ZSxzdHJva2U6IzE2YTM0YSxjb2xvcjojZmZm?theme=dark&bgColor=0d1117" alt="middleware pipeline diagram" />
 
 <br />
 
@@ -505,42 +484,7 @@ createTabSync({ onError: (err) => Sentry.captureException(err) });
 
 <div align="center">
 
-```mermaid
-graph TB
-    subgraph API["🔌 Public API — createTabSync()"]
-        SM["📊 State Manager<br/><i>get / set / patch / subscribe</i>"]
-        LE["👑 Leader Election<br/><i>heartbeat / failover / resign</i>"]
-        RPC["📡 RPC Handler<br/><i>call / handle / timeout</i>"]
-    end
-
-    subgraph CORE["⚙️ Core Layer"]
-        TR["📋 Tab Registry<br/><i>tracks all active tabs</i>"]
-        MW["🛡️ Middleware Pipeline<br/><i>intercept → validate → transform → apply</i>"]
-    end
-
-    subgraph TRANSPORT["📡 Transport Layer — auto-detect"]
-        BC["⚡ BroadcastChannel<br/><i>primary, fast</i>"]
-        LS["💾 localStorage<br/><i>fallback</i>"]
-    end
-
-    SM --> TR
-    LE --> TR
-    RPC --> TR
-    TR --> MW
-    MW --> BC
-    MW --> LS
-
-    style API fill:#4f46e5,stroke:#4338ca,color:#fff,stroke-width:2px
-    style CORE fill:#7c3aed,stroke:#6d28d9,color:#fff,stroke-width:2px
-    style TRANSPORT fill:#2563eb,stroke:#1d4ed8,color:#fff,stroke-width:2px
-    style SM fill:#6366f1,stroke:#4f46e5,color:#fff
-    style LE fill:#6366f1,stroke:#4f46e5,color:#fff
-    style RPC fill:#6366f1,stroke:#4f46e5,color:#fff
-    style TR fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style MW fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style BC fill:#3b82f6,stroke:#2563eb,color:#fff
-    style LS fill:#3b82f6,stroke:#2563eb,color:#fff
-```
+<img src="https://mermaid.ink/img/Z3JhcGggVEIKICAgIHN1YmdyYXBoIEFQSVsiUHVibGljIEFQSSAtIGNyZWF0ZVRhYlN5bmMiXQogICAgICAgIFNNWyJTdGF0ZSBNYW5hZ2VyIl0KICAgICAgICBMRVsiTGVhZGVyIEVsZWN0aW9uIl0KICAgICAgICBSUENbIlJQQyBIYW5kbGVyIl0KICAgIGVuZAogICAgc3ViZ3JhcGggQ09SRVsiQ29yZSBMYXllciJdCiAgICAgICAgVFJbIlRhYiBSZWdpc3RyeSJdCiAgICAgICAgTVdbIk1pZGRsZXdhcmUgUGlwZWxpbmUiXQogICAgZW5kCiAgICBzdWJncmFwaCBUUkFOU1BPUlRbIlRyYW5zcG9ydCBMYXllciJdCiAgICAgICAgQkNbIkJyb2FkY2FzdENoYW5uZWwiXQogICAgICAgIExTWyJsb2NhbFN0b3JhZ2UiXQogICAgZW5kCiAgICBTTSAtLT4gVFIKICAgIExFIC0tPiBUUgogICAgUlBDIC0tPiBUUgogICAgVFIgLS0-IE1XCiAgICBNVyAtLT4gQkMKICAgIE1XIC0tPiBMUwogICAgc3R5bGUgQVBJIGZpbGw6IzRmNDZlNSxzdHJva2U6IzQzMzhjYSxjb2xvcjojZmZmLHN0cm9rZS13aWR0aDoycHgKICAgIHN0eWxlIENPUkUgZmlsbDojN2MzYWVkLHN0cm9rZTojNmQyOGQ5LGNvbG9yOiNmZmYsc3Ryb2tlLXdpZHRoOjJweAogICAgc3R5bGUgVFJBTlNQT1JUIGZpbGw6IzI1NjNlYixzdHJva2U6IzFkNGVkOCxjb2xvcjojZmZmLHN0cm9rZS13aWR0aDoycHg?theme=dark&bgColor=0d1117" alt="architecture diagram" />
 
 </div>
 
@@ -548,40 +492,11 @@ graph TB
 
 ### How State Sync Works
 
-```mermaid
-sequenceDiagram
-    participant A as Tab A (Leader 👑)
-    participant BC as BroadcastChannel
-    participant B as Tab B
-    participant C as Tab C
-
-    A->>A: set('theme', 'dark')
-    Note over A: Local state updated instantly
-    A->>BC: STATE_UPDATE { theme: 'dark' }
-    BC-->>B: 
-    BC-->>C: 
-    B->>B: Apply state + notify subscribers
-    C->>C: Apply state + notify subscribers
-```
+<img src="https://mermaid.ink/img/c2VxdWVuY2VEaWFncmFtCiAgICBwYXJ0aWNpcGFudCBBIGFzIFRhYiBBIExlYWRlcgogICAgcGFydGljaXBhbnQgQkMgYXMgQnJvYWRjYXN0Q2hhbm5lbAogICAgcGFydGljaXBhbnQgQiBhcyBUYWIgQgogICAgcGFydGljaXBhbnQgQyBhcyBUYWIgQwogICAgQS0-PkE6IHNldCB0aGVtZSBkYXJrCiAgICBOb3RlIG92ZXIgQTogTG9jYWwgc3RhdGUgdXBkYXRlZAogICAgQS0-PkJDOiBTVEFURV9VUERBVEUKICAgIEJDLS0-PkI6IG1lc3NhZ2UKICAgIEJDLS0-PkM6IG1lc3NhZ2UKICAgIEItPj5COiBBcHBseSArIG5vdGlmeQogICAgQy0-PkM6IEFwcGx5ICsgbm90aWZ5?theme=dark&bgColor=0d1117" alt="state sync sequence diagram" />
 
 ### How Leader Election Works
 
-```mermaid
-sequenceDiagram
-    participant A as Tab A (oldest)
-    participant B as Tab B
-    participant C as Tab C (newest)
-
-    Note over A,C: Leader (Tab A) closes...
-    A--xB: ❌ Heartbeat stops
-    B->>B: 3 missed heartbeats → leader dead
-    B->>C: LEADER_CLAIM
-    C->>C: Tab B is older → yield
-    Note over B: Waits 300ms for higher-priority claims
-    B->>C: LEADER_ACK
-    Note over B: 👑 Tab B is now leader
-    B->>C: LEADER_HEARTBEAT (every 2s)
-```
+<img src="https://mermaid.ink/img/c2VxdWVuY2VEaWFncmFtCiAgICBwYXJ0aWNpcGFudCBBIGFzIFRhYiBBIG9sZGVzdAogICAgcGFydGljaXBhbnQgQiBhcyBUYWIgQgogICAgcGFydGljaXBhbnQgQyBhcyBUYWIgQyBuZXdlc3QKICAgIE5vdGUgb3ZlciBBLEM6IExlYWRlciBUYWIgQSBjbG9zZXMKICAgIEItPj5COiAzIG1pc3NlZCBoZWFydGJlYXRzCiAgICBCLT4-QzogTEVBREVSX0NMQUlNCiAgICBDLT4-QzogVGFiIEIgaXMgb2xkZXIgeWllbGQKICAgIE5vdGUgb3ZlciBCOiBXYWl0IDMwMG1zCiAgICBCLT4-QzogTEVBREVSX0FDSwogICAgTm90ZSBvdmVyIEI6IFRhYiBCIGlzIG5vdyBsZWFkZXIKICAgIEItPj5DOiBMRUFERVJfSEVBUlRCRUFU?theme=dark&bgColor=0d1117" alt="leader election sequence diagram" />
 
 <br />
 
@@ -692,17 +607,7 @@ function logout() {
 
 <br />
 
-```mermaid
-graph LR
-    Server["🖥️ Server"] <-->|WebSocket| A["Tab A<br/>👑 Leader"]
-    A -->|"state sync"| B["Tab B"]
-    A -->|"state sync"| C["Tab C"]
-
-    style Server fill:#059669,stroke:#047857,color:#fff
-    style A fill:#4f46e5,stroke:#4338ca,color:#fff
-    style B fill:#6366f1,stroke:#4f46e5,color:#fff
-    style C fill:#6366f1,stroke:#4f46e5,color:#fff
-```
+<img src="https://mermaid.ink/img/Z3JhcGggTFIKICAgIFNlcnZlclsiU2VydmVyIl0gPC0tPnxXZWJTb2NrZXR8IEFbIlRhYiBBIExlYWRlciJdCiAgICBBIC0tPnxzdGF0ZSBzeW5jfCBCWyJUYWIgQiJdCiAgICBBIC0tPnxzdGF0ZSBzeW5jfCBDWyJUYWIgQyJdCiAgICBzdHlsZSBTZXJ2ZXIgZmlsbDojMDU5NjY5LHN0cm9rZTojMDQ3ODU3LGNvbG9yOiNmZmYKICAgIHN0eWxlIEEgZmlsbDojNGY0NmU1LHN0cm9rZTojNDMzOGNhLGNvbG9yOiNmZmYKICAgIHN0eWxlIEIgZmlsbDojNjM2NmYxLHN0cm9rZTojNGY0NmU1LGNvbG9yOiNmZmYKICAgIHN0eWxlIEMgZmlsbDojNjM2NmYxLHN0cm9rZTojNGY0NmU1LGNvbG9yOiNmZmY?theme=dark&bgColor=0d1117" alt="websocket leader pattern diagram" />
 
 ```ts
 const sync = createTabSync({
