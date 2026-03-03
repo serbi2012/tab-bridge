@@ -3,7 +3,7 @@
 <br />
 
 <h1>
-  <code>🔄 tab-sync</code>
+  <code>🔄 tab-bridge</code>
 </h1>
 
 <h3>Real-time State Synchronization Across Browser Tabs</h3>
@@ -14,8 +14,8 @@
 
 <br />
 
-[![npm version](https://img.shields.io/npm/v/tab-sync?style=for-the-badge&color=cb3837&label=npm&logo=npm&logoColor=white)](https://www.npmjs.com/package/tab-sync)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/tab-sync?style=for-the-badge&color=6ead0a&label=size&logo=webpack&logoColor=white)](https://bundlephobia.com/package/tab-sync)
+[![npm version](https://img.shields.io/npm/v/tab-bridge?style=for-the-badge&color=cb3837&label=npm&logo=npm&logoColor=white)](https://www.npmjs.com/package/tab-bridge)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/tab-bridge?style=for-the-badge&color=6ead0a&label=size&logo=webpack&logoColor=white)](https://bundlephobia.com/package/tab-bridge)
 [![TypeScript](https://img.shields.io/badge/TypeScript-first-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![license](https://img.shields.io/github/license/serbi2012/tab-sync?style=for-the-badge&color=blue&logo=open-source-initiative&logoColor=white)](./LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/serbi2012/tab-sync?style=for-the-badge&color=yellow&logo=github&logoColor=white)](https://github.com/serbi2012/tab-sync)
@@ -41,11 +41,11 @@ graph LR
 
 <br />
 
-## Why tab-sync?
+## Why tab-bridge?
 
 > When users open your app in multiple tabs, things break — **stale data**, **duplicated WebSocket connections**, **conflicting writes**.
 
-**tab-sync** solves all of this with a single function call:
+**tab-bridge** solves all of this with a single function call:
 
 ```ts
 const sync = createTabSync({ initial: { theme: 'light', count: 0 } });
@@ -101,11 +101,11 @@ Native browser APIs only, ~4KB gzipped, fully tree-shakable
 ## 📦 Getting Started
 
 ```bash
-npm install tab-sync
+npm install tab-bridge
 ```
 
 ```ts
-import { createTabSync } from 'tab-sync';
+import { createTabSync } from 'tab-bridge';
 
 const sync = createTabSync({
   initial: { theme: 'light', count: 0 },
@@ -381,7 +381,7 @@ First-class React integration built on `useSyncExternalStore` for **zero-tear co
 ```tsx
 import {
   TabSyncProvider, useTabSync, useTabSyncValue, useTabSyncSelector, useIsLeader,
-} from 'tab-sync/react';
+} from 'tab-bridge/react';
 ```
 
 <br />
@@ -476,7 +476,7 @@ function LeaderIndicator() {
 Structured errors with error codes for precise `catch` handling:
 
 ```ts
-import { TabSyncError, ErrorCode } from 'tab-sync';
+import { TabSyncError, ErrorCode } from 'tab-bridge';
 
 try {
   await sync.call('leader', 'getData');
@@ -597,7 +597,7 @@ sequenceDiagram
 <br />
 
 ```ts
-import { createChannel } from 'tab-sync';
+import { createChannel } from 'tab-bridge';
 
 createTabSync({ transport: 'local-storage' });
 
@@ -614,7 +614,7 @@ const channel = createChannel('my-channel', 'broadcast-channel');
 All messages include a `version` field. The library automatically ignores messages from incompatible protocol versions, enabling **safe rolling deployments** — old and new tabs can coexist without errors.
 
 ```ts
-import { PROTOCOL_VERSION } from 'tab-sync';
+import { PROTOCOL_VERSION } from 'tab-bridge';
 console.log(PROTOCOL_VERSION); // 1
 ```
 
@@ -650,7 +650,7 @@ For library authors or advanced use cases, all internal modules are exported:
 import {
   StateManager, TabRegistry, LeaderElection, RPCHandler,
   Emitter, createMessage, generateTabId, monotonic,
-} from 'tab-sync';
+} from 'tab-bridge';
 ```
 
 </details>
@@ -821,11 +821,11 @@ MIT © [serbi2012](https://github.com/serbi2012)
 <br />
 
 <a href="https://github.com/serbi2012/tab-sync">
-  <img src="https://img.shields.io/badge/GitHub-tab--sync-4f46e5?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+  <img src="https://img.shields.io/badge/GitHub-tab--bridge-4f46e5?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
 </a>
 &nbsp;
-<a href="https://www.npmjs.com/package/tab-sync">
-  <img src="https://img.shields.io/badge/npm-tab--sync-cb3837?style=for-the-badge&logo=npm&logoColor=white" alt="npm" />
+<a href="https://www.npmjs.com/package/tab-bridge">
+  <img src="https://img.shields.io/badge/npm-tab--bridge-cb3837?style=for-the-badge&logo=npm&logoColor=white" alt="npm" />
 </a>
 
 <br />

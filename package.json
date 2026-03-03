@@ -1,5 +1,5 @@
 {
-  "name": "tab-sync",
+  "name": "tab-bridge",
   "version": "0.1.0",
   "description": "Zero-dependency TypeScript library for real-time state synchronization across browser tabs, with leader election and cross-tab RPC",
   "type": "module",
@@ -41,7 +41,7 @@
     "demo": "npm run build && npx serve ."
   },
   "keywords": [
-    "tab-sync",
+    "tab-bridge",
     "broadcast-channel",
     "cross-tab",
     "state-sync",
@@ -49,7 +49,14 @@
     "browser-tabs",
     "rpc",
     "multi-tab",
-    "localstorage"
+    "localstorage",
+    "tab-sync",
+    "tab-communication",
+    "shared-state",
+    "realtime",
+    "typescript-library",
+    "react-hooks",
+    "zero-dependency"
   ],
   "author": "serbi2012",
   "license": "MIT",
