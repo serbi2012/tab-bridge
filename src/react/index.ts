@@ -7,3 +7,4 @@ export { useIsLeader } from './use-leader';
 export { useTabs } from './use-tabs';
 export { useLeaderInfo } from './use-leader-info';
 export { useTabSyncActions, type TabSyncActions } from './use-actions';
+export { TabSyncDevTools, type TabSyncDevToolsProps } from './devtools';

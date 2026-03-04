@@ -1,6 +1,6 @@
 {
   "name": "tab-bridge",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Zero-dependency TypeScript library for real-time state synchronization across browser tabs, with leader election and cross-tab RPC",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -36,6 +36,26 @@
         "types": "./dist/zustand/index.d.cts",
         "default": "./dist/zustand/index.cjs"
       }
+    },
+    "./jotai": {
+      "import": {
+        "types": "./dist/jotai/index.d.ts",
+        "default": "./dist/jotai/index.js"
+      },
+      "require": {
+        "types": "./dist/jotai/index.d.cts",
+        "default": "./dist/jotai/index.cjs"
+      }
+    },
+    "./redux": {
+      "import": {
+        "types": "./dist/redux/index.d.ts",
+        "default": "./dist/redux/index.js"
+      },
+      "require": {
+        "types": "./dist/redux/index.d.cts",
+        "default": "./dist/redux/index.cjs"
+      }
     }
   },
   "files": [
@@ -48,6 +68,7 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run typecheck && npm test && npm run build",
+    "test:e2e": "playwright test",
     "demo": "npm run build && npx serve ."
   },
   "keywords": [
@@ -80,7 +101,9 @@
   },
   "sideEffects": false,
   "peerDependencies": {
+    "jotai": ">=2.0.0",
     "react": ">=18.0.0",
+    "redux": ">=4.0.0",
     "zustand": ">=4.0.0"
   },
   "peerDependenciesMeta": {
@@ -89,15 +112,26 @@
     },
     "zustand": {
       "optional": true
+    },
+    "jotai": {
+      "optional": true
+    },
+    "redux": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@reduxjs/toolkit": "^2.11.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitest/coverage-v8": "^2.1.9",
+    "jotai": "^2.18.0",
     "jsdom": "^25.0.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "redux": "^5.0.1",
+    "serve": "^14.2.6",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^2.1.9",

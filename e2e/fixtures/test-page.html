@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>tab-bridge E2E Test</title>
+</head>
+<body>
+  <div id="status">loading</div>
+  <div id="state-display"></div>
+  <div id="tab-id"></div>
+  <div id="leader-status"></div>
+  <div id="tab-count"></div>
+  <div id="rpc-result"></div>
+
+  <script type="module">
+    import { createTabSync } from '../../dist/index.js';
+
+    const sync = createTabSync({
+      initial: { count: 0, theme: 'light' },
+      channel: 'e2e-test',
+    });
+
+    window.__tabSync = sync;
+
+    document.getElementById('tab-id').textContent = sync.id;
+    document.getElementById('status').textContent = 'ready';
+
+    function updateDisplay() {
+      const state = sync.getAll();
+      document.getElementById('state-display').textContent = JSON.stringify(state);
+      document.getElementById('leader-status').textContent = String(sync.isLeader());
+      document.getElementById('tab-count').textContent = String(sync.getTabCount());
+    }
+
+    sync.onChange(() => updateDisplay());
+    sync.onTabChange(() => updateDisplay());
+    sync.onLeader(() => {
+      updateDisplay();
+      return () => updateDisplay();
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>

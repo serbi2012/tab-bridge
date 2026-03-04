@@ -5,6 +5,8 @@ export default defineConfig({
     index: 'src/index.ts',
     'react/index': 'src/react/index.ts',
     'zustand/index': 'src/zustand/index.ts',
+    'jotai/index': 'src/jotai/index.ts',
+    'redux/index': 'src/redux/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,
@@ -12,6 +14,6 @@ export default defineConfig({
   sourcemap: false,
   treeshake: true,
   splitting: true,
-  external: ['react', 'zustand', 'zustand/vanilla'],
+  external: ['react', 'zustand', 'zustand/vanilla', 'jotai', 'jotai/vanilla', 'redux', '@reduxjs/toolkit'],
   outDir: 'dist',
 });

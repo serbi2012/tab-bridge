@@ -26,7 +26,7 @@
 
 <br />
 
-[**Getting Started**](#-getting-started) · [**API**](#-api-reference) · [**React**](#%EF%B8%8F-react) · [**Zustand**](#-zustand) · [**Next.js**](#-nextjs) · [**Architecture**](#-architecture) · [**Examples**](#-examples) · [**Live Demo**](https://serbi2012.github.io/tab-bridge/)
+[**Getting Started**](#-getting-started) · [**API**](#-api-reference) · [**React**](#%EF%B8%8F-react) · [**Zustand**](#-zustand) · [**Jotai**](#-jotai) · [**Redux**](#-redux) · [**DevTools**](#-devtools) · [**Next.js**](#-nextjs) · [**Architecture**](#-architecture) · [**Examples**](#-examples) · [**Live Demo**](https://serbi2012.github.io/tab-bridge/)
 
 </div>
 
@@ -76,8 +76,11 @@ Intercept, validate, and transform state changes before they're applied
 #### 💾 State Persistence
 Survive page reloads with key whitelisting and custom storage backends
 
-#### 🐻 Zustand Middleware
-One-line integration — `tabSync()` wraps any Zustand store for cross-tab sync
+#### 🐻 Zustand / Jotai / Redux
+First-class integrations — `tabSync`, `atomWithTabSync`, `tabSyncEnhancer`
+
+#### 🔧 DevTools Panel
+Floating `<TabSyncDevTools />` with state inspection, tab list, and event log
 
 #### 📦 Zero Dependencies
 Native browser APIs only, ~4KB gzipped, fully tree-shakable
@@ -643,6 +646,152 @@ const useStore = create(
 ```
 
 </details>
+
+<br />
+
+---
+
+<br />
+
+## 🧪 Jotai
+
+Synchronize individual [Jotai](https://jotai.org) atoms across browser tabs with zero boilerplate.
+
+```bash
+npm install tab-bridge jotai
+```
+
+### Quick Start
+
+```ts
+import { atomWithTabSync } from 'tab-bridge/jotai';
+
+const countAtom = atomWithTabSync('count', 0, { channel: 'my-app' });
+const themeAtom = atomWithTabSync('theme', 'light', { channel: 'my-app' });
+```
+
+Use them like regular atoms — `useAtom(countAtom)` works as expected. Changes are automatically synced to all tabs.
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `channel` | `string` | `'tab-sync-jotai'` | Channel name for cross-tab communication |
+| `transport` | `'broadcast-channel' \| 'local-storage'` | auto-detect | Force a specific transport |
+| `debug` | `boolean` | `false` | Enable debug logging |
+| `onError` | `(error: Error) => void` | — | Error callback |
+| `onSyncReady` | `(instance: TabSyncInstance) => void` | — | Access underlying instance |
+
+### How It Works
+
+Each atom creates its own `createTabSync` instance scoped to `${channel}:${key}`. The instance is created when the atom is first subscribed to and destroyed when the last subscriber unmounts.
+
+### Derived Atoms
+
+Derived atoms work out of the box:
+
+```ts
+import { atom } from 'jotai';
+
+const doubledAtom = atom((get) => get(countAtom) * 2);
+// Automatically updates when countAtom syncs from another tab
+```
+
+<br />
+
+---
+
+<br />
+
+## 🏪 Redux
+
+Synchronize your Redux (or Redux Toolkit) store across browser tabs via a **store enhancer**.
+
+```bash
+npm install tab-bridge redux       # or @reduxjs/toolkit
+```
+
+### Quick Start
+
+```ts
+import { configureStore } from '@reduxjs/toolkit';
+import { tabSyncEnhancer } from 'tab-bridge/redux';
+
+const store = configureStore({
+  reducer: { counter: counterReducer, theme: themeReducer },
+  enhancers: (getDefault) =>
+    getDefault().concat(tabSyncEnhancer({ channel: 'my-app' })),
+});
+```
+
+Every dispatch that changes state is automatically synced. Remote changes are merged via an internal `@@tab-bridge/MERGE` action — no reducer changes needed.
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `channel` | `string` | `'tab-sync-redux'` | Channel name |
+| `include` | `string[]` | — | Only sync these top-level keys (slice names) |
+| `exclude` | `string[]` | — | Exclude these top-level keys |
+| `merge` | `(local, remote, key) => unknown` | LWW | Custom conflict resolution |
+| `transport` | `'broadcast-channel' \| 'local-storage'` | auto-detect | Force transport |
+| `debug` | `boolean` | `false` | Debug logging |
+| `onError` | `(error: Error) => void` | — | Error callback |
+| `onSyncReady` | `(instance: TabSyncInstance) => void` | — | Access underlying instance |
+
+### Selective Sync
+
+```ts
+tabSyncEnhancer({
+  channel: 'my-app',
+  include: ['counter', 'settings'],  // only sync these slices
+  // exclude: ['auth'],              // or exclude specific slices
+})
+```
+
+### Design Decision: State-Based Sync
+
+The enhancer diffs top-level state keys after each dispatch rather than replaying actions. This guarantees consistency regardless of reducer purity and works with any middleware stack.
+
+<br />
+
+---
+
+<br />
+
+## 🔧 DevTools
+
+A floating development panel for inspecting tab-bridge state, tabs, and events in real time.
+
+```tsx
+import { TabSyncDevTools } from 'tab-bridge/react';
+
+function App() {
+  return (
+    <TabSyncProvider options={{ initial: { count: 0 }, channel: 'app' }}>
+      <MyApp />
+      {process.env.NODE_ENV === 'development' && <TabSyncDevTools />}
+    </TabSyncProvider>
+  );
+}
+```
+
+### Features
+
+| Tab | Description |
+|---|---|
+| **State** | Live JSON view of current state + manual editing (textarea → Apply) |
+| **Tabs** | Active tab list with leader badge and "you" indicator |
+| **Log** | Real-time event stream — state changes, tab joins/leaves |
+
+### Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `position` | `'bottom-right' \| 'bottom-left' \| 'top-right' \| 'top-left'` | `'bottom-right'` | Panel position |
+| `defaultOpen` | `boolean` | `false` | Start expanded |
+
+**Tree-shakeable** — if you never import `TabSyncDevTools`, it won't appear in your production bundle.
 
 <br />
 
